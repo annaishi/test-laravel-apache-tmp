@@ -1,0 +1,23 @@
+# .env
+# .env.*
+.git
+.gitignore
+
+README.md
+
+# .dockerignore
+# Dockerfile
+# docker-compose.yml
+
+# laravel/vendor
+# laravel/node_modules
+
+# laravel/storage/*
+# !laravel/storage/app/*
+# !laravel/storage/debugbar/.gitignore
+# !laravel/storage/framework/cache/.gitignore
+# !laravel/storage/framework/sessions/.gitignore
+# !laravel/storage/framework/views/.gitignore
+# !laravel/storage/logs/.gitignore
+
+# laravel/public/hot
