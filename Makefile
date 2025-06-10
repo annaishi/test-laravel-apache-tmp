@@ -76,6 +76,7 @@ front-create:
 	docker compose exec -it vite npm install --save-dev @vitejs/plugin-vue
 	docker compose exec -it vite npm install --save-dev vue-router@4
 	docker compose exec -it vite npm install --save-dev pinia
+	docker compose exec -it vite npm install --save-dev sass
 
 # vue導入の備忘録
 # laravelは動いている状態でスタート
