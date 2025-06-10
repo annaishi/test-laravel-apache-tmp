@@ -15,7 +15,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./infra/development/php-apache/Dockerfile   # ★ 新しい Dockerfile へのパス
+      dockerfile: ./infra/development/php/Dockerfile
     volumes:
       - ./laravel:/var/www/html
     ports:
