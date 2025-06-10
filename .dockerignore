@@ -10,7 +10,7 @@ README.md
 # docker-compose.yml
 
 # laravel/vendor
-# laravel/node_modules
+laravel/node_modules
 
 # laravel/storage/*
 # !laravel/storage/app/*
