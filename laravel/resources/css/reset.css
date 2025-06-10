@@ -1,0 +1,181 @@
+/* ==============================
+   Reset CSS (モダンで軽量なリセット)
+   ============================== */
+
+/* 1. ボックスサイズを統一（border-box） */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* 2. HTMLとBODYの基本設定 */
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    font-family: system-ui, "Noto Sans JP", sans-serif, Arial;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 1.5;
+
+    color: #333;
+    background-color: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 3. ヘッディングとパラグラフのマージン調整 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+    padding: 0;
+    height: auto;
+    min-height: min-content;
+
+    font-family: system-ui, "Noto Sans JP", sans-serif, Arial;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    white-space: nowrap; /* 改行しない */
+    word-break: keep-all; /* 単語の途中で改行しない */
+    overflow-wrap: normal; /* 英単語の途中で改行しない */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+p {
+    white-space: pre-wrap; /* 改行する */
+    word-break: break-word; /* 単語の途中で改行する */
+    overflow-wrap: break-word; /* 英単語の途中で改行する */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 4. レイアウト関連の要素の基本設定 */
+header,
+main,
+footer,
+section,
+article,
+aside,
+nav {
+    box-sizing: inherit;
+    display: block;
+}
+
+/* 5. リストのリセット */
+ul,
+ol {
+    list-style: none;
+}
+
+/* 6. リンクのリセット */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 7. 画像・動画・iframeのデフォルト設定 */
+img,
+video,
+iframe {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+}
+
+/* 8. ボタン・フォーム要素のリセット */
+button,
+input,
+select,
+textarea {
+    font-family: system-ui, "Noto Sans JP", sans-serif, Arial;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 1.5;
+    border: none;
+    background: transparent;
+    outline: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* 9. テーブルのリセット */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+th,
+td {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, "Noto Sans JP", sans-serif, Arial;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 1.5;
+    text-align: left;
+    vertical-align: middle;
+    border: none;
+    background: transparent;
+    outline: none;
+}
+th {
+    white-space: pre-wrap; /* 改行する */
+    word-break: break-word; /* 単語の途中で改行する */
+    overflow-wrap: break-word; /* 英単語の途中で改行する */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+td {
+    white-space: nowrap; /* 改行しない */
+    word-break: keep-all; /* 単語の途中で改行しない */
+    overflow-wrap: normal; /* 英単語の途中で改行しない */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 10. focus-visible のスタイル (アクセシビリティ向上で個別に設定する) */
+:focus-visible {
+    outline: none;
+}
+
+/* 11. #appのリセット */
+#app {
+    flex: 1 1 100%;
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
