@@ -12,6 +12,7 @@ Route::get('/example', function () {
     return view('frontend');
 });
 
+# spaからバックエンドにアクセスするためのAPI
 Route::prefix('resources')
     ->as('resources.')
     ->group(function () {
