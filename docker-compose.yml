@@ -28,6 +28,13 @@ services:
       - db-store:/var/lib/mysql
     ports:
       - "43306:3306"
+  redis:
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: ./infra/development/redis/Dockerfile
+    ports:
+      - 46379:6379
 
 volumes:
   node_modules:
