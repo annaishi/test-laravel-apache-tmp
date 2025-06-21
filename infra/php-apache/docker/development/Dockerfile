@@ -29,7 +29,7 @@ RUN sh -c 'apt-get update && apt-get install -y libicu-dev && docker-php-ext-con
 RUN sh -c 'apt-get update && apt-get install -y autoconf build-essential && \
    pecl install xdebug && docker-php-ext-enable xdebug'
 #todo 必要かどうか確認する
-COPY ./infra/php-apache/php/docker-php-ext-xdebug.ini /tmp/
+COPY ../../php/docker-php-ext-xdebug.ini /tmp/
 RUN sh -c 'rm /tmp/docker-php-ext-xdebug.ini' || sh -c 'cp /tmp/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini'
 
 # install redis
@@ -54,8 +54,8 @@ WORKDIR /vite
 # node-gyp のビルドに必要な依存をインストール (追記)
 RUN apt-get update && apt-get install -y python3 make g++
 
-COPY ./laravel/package.json .
-COPY ./laravel/package-lock.json .
+COPY ../../../../laravel/package.json .
+COPY ../../../../laravel/package-lock.json .
 
 # ziggy
 COPY --from=php-base /work/vendor ./vendor
@@ -63,16 +63,16 @@ RUN npm ci
 
 # -- ビルドにかかわるものだけ
 # -- .dockerignoreで要らないものは無視される
-#COPY ./.eslintignore .
-#COPY ./.eslintrc.js .
-#COPY ./tsconfig.json .
-COPY ./vite.config.js .
-COPY ./tailwind.config.js .
-COPY ./postcss.config.js .
-COPY ./public ./public
-#COPY ./resources/assets ./resources/assets
-COPY ./resources/css ./resources/css
-COPY ./resources/js ./resources/js
+#COPY ../../../../laravel/.eslintignore .
+#COPY ../../../../laravel/.eslintrc.js .
+#COPY ../../../../laravel/tsconfig.json .
+COPY ../../../../laravel/vite.config.js .
+COPY ../../../../laravel/tailwind.config.js .
+COPY ../../../../laravel/postcss.config.js .
+COPY ../../../../laravel/public ./public
+#COPY ../../../../laravel/resources/assets ./resources/assets
+COPY ../../../../laravel/resources/css ./resources/css
+COPY ../../../../laravel/resources/js ./resources/js
 
 # この設定は南波さんに聞いておいてもらう
 RUN bash -c 'npm run build'
@@ -93,7 +93,7 @@ RUN composer dump-autoload
 
 # -- PHPの設定 (from: https://hub.docker.com/_/php)
 # todo 必要か確認
-COPY ./infra/php/php-apache/php/php.ini-*.patch ./
+COPY ../../php/php.ini-*.patch ./
 RUN cp "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini"; \
     patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-common.patch"; \
     # patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-dev.patch" ##これは死ぬ
@@ -112,8 +112,8 @@ RUN a2enmod rewrite && \
     sed -i -E 's/^(ServerSignature) On$/\1 Off/' /etc/apache2/conf-enabled/security.conf && \
     sed -i -E 's/^(KeepAliveTimeout) 5$/\1 150/' /etc/apache2/apache2.conf
 
-COPY ./infra/php-apache/apache/000-default.conf /etc/apache2/sites-enabled/000-default.conf
-COPY ./infra/php-apache/apache/envvars /etc/apache2/envvars
+COPY ../../apache/000-default.conf /etc/apache2/sites-enabled/000-default.conf
+COPY ../../apache/envvars /etc/apache2/envvars
 
 RUN chown -R www-data:www-data /work/storage
 # WHY IS THIS NEEDED?!?!
