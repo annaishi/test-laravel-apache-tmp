@@ -1,0 +1,4 @@
+1574c1574
+< ;assert.exception = On
+---
+> assert.exception = On

@@ -1,0 +1,30 @@
+379c379
+< expose_php = On
+---
+> expose_php = Off
+388c388
+< max_execution_time = 30
+---
+> max_execution_time = ${PHP_MAX_EXECUTION_TIME}
+405c405
+< ;max_input_vars = 1000
+---
+> max_input_vars = ${PHP_MAX_INPUT_VARS}
+409c409
+< memory_limit = 128M
+---
+> memory_limit = ${PHP_MEMORY_LIMIT}
+588a589
+> error_log = /dev/stderr
+694c695
+< post_max_size = 8M
+---
+> post_max_size = ${PHP_POST_MAX_SIZE}
+846c847
+< upload_max_filesize = 2M
+---
+> upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}
+962c963
+< ;date.timezone =
+---
+> date.timezone = Asia/Tokyo
