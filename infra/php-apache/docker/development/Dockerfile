@@ -29,7 +29,7 @@ RUN sh -c 'apt-get update && apt-get install -y libicu-dev && docker-php-ext-con
 RUN sh -c 'apt-get update && apt-get install -y autoconf build-essential && \
    pecl install xdebug && docker-php-ext-enable xdebug'
 #todo 必要かどうか確認する
-COPY ../../php/docker-php-ext-xdebug.ini /tmp/
+COPY ../../../../infra/php-apache/php/docker-php-ext-xdebug.ini /tmp/
 RUN sh -c 'rm /tmp/docker-php-ext-xdebug.ini' || sh -c 'cp /tmp/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini'
 
 # install redis
@@ -38,8 +38,8 @@ RUN pecl install redis && docker-php-ext-enable redis
 # -- PHPの依存ライブラリのインストール
 # キャッシュするために先にcomposer installだけやっておく
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-COPY ./composer.json .
-COPY ./composer.lock .
+COPY ../../../../laravel/composer.json .
+COPY ../../../../laravel/composer.lock .
 
 RUN mkdir -p database/seeders
 RUN mkdir database/factories
@@ -67,8 +67,8 @@ RUN npm ci
 #COPY ../../../../laravel/.eslintrc.js .
 #COPY ../../../../laravel/tsconfig.json .
 COPY ../../../../laravel/vite.config.js .
-COPY ../../../../laravel/tailwind.config.js .
-COPY ../../../../laravel/postcss.config.js .
+# COPY ../../../../laravel/tailwind.config.js .
+# COPY ../../../../laravel/postcss.config.js .
 COPY ../../../../laravel/public ./public
 #COPY ../../../../laravel/resources/assets ./resources/assets
 COPY ../../../../laravel/resources/css ./resources/css
@@ -84,7 +84,7 @@ RUN bash -c 'mkdir -p public/build && touch public/build/dummy'
 FROM php-base
 
 # -- 残りをもってく。 .dockerignoreで要らないものは無視される
-COPY ./ .
+COPY ../../../../laravel/ .
 # ビルドしたアセットをコピーしてくる
 COPY --from=vite /vite/public/build ./public/build
 
@@ -93,9 +93,9 @@ RUN composer dump-autoload
 
 # -- PHPの設定 (from: https://hub.docker.com/_/php)
 # todo 必要か確認
-COPY ../../php/php.ini-*.patch ./
+COPY ../../../../infra/php-apache/php/php.ini-*.patch ${PHP_INI_DIR}/
 RUN cp "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini"; \
-    patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-common.patch"; \
+    patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-common.patch"
     # patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-dev.patch" ##これは死ぬ
 
 # apacheのルートにシンボリックリンクを貼る
@@ -112,8 +112,8 @@ RUN a2enmod rewrite && \
     sed -i -E 's/^(ServerSignature) On$/\1 Off/' /etc/apache2/conf-enabled/security.conf && \
     sed -i -E 's/^(KeepAliveTimeout) 5$/\1 150/' /etc/apache2/apache2.conf
 
-COPY ../../apache/000-default.conf /etc/apache2/sites-enabled/000-default.conf
-COPY ../../apache/envvars /etc/apache2/envvars
+COPY ../../../../infra/php-apache/apache/000-default.conf /etc/apache2/sites-enabled/000-default.conf
+COPY ../../../../infra/php-apache/apache/envvars /etc/apache2/envvars
 
 RUN chown -R www-data:www-data /work/storage
 # WHY IS THIS NEEDED?!?!
