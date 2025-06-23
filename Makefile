@@ -53,7 +53,7 @@ app-create:
 	rm -rf laravel
 	mkdir -p laravel
 	docker build -t app-image ./infra/development/php --no-cache
-	docker run -d --name app-container -it --mount type=bind,source=$(shell pwd)/laravel,target=/var/www/html -p 9000:9000 app-image
+	docker run -d --name app-container -it --mount type=bind,source=$(shell pwd)/laravel,target=/var/www/work -p 9000:9000 app-image
 	docker exec -it app-container composer create-project laravel/laravel .
 	docker stop app-container
 	docker rm app-container
