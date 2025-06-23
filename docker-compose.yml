@@ -1,46 +1,96 @@
-services:
-  vite:
-    build:
-      context: .
-      dockerfile: ./infra/development/vite/Dockerfile
-    volumes:
-      - type: bind
-        source: ./laravel
-        target: /var/www/html
-      - type: volume
-        source: node_modules
-        target: /var/www/html/node_modules
-    ports:
-      - "5173:5173"
-  app:
-    build:
-      context: .
-      dockerfile: ./infra/development/php/Dockerfile
-    volumes:
-      - ./laravel:/var/www/html
-    ports:
-      - "48080:80"     # 以前 nginx で使っていた 48080 をそのまま転用
-    depends_on:
-      - db
-  db:
-    build: ./infra/development/mysql
-    volumes:
-      - db-store:/var/lib/mysql
-    ports:
-      - "43306:3306"
-  redis:
-    platform: linux/arm64
-    build:
-      context: .
-      dockerfile: ./infra/development/redis/Dockerfile
-    ports:
-      - 46379:6379
+###### 開発用 ######
+x-common-env: &common-env
+    TZ: Asia/Tokyo
+
+x-php-env: &php-env
+    PHP_MAX_EXECUTION_TIME: 300
+    PHP_MEMORY_LIMIT: 128M
+    PHP_MAX_INPUT_VARS: 1000
+    PHP_POST_MAX_SIZE: 10M
+    PHP_UPLOAD_MAX_FILESIZE: 16M
+
+x-db-env: &db-env
+    DB_CONNECTION: mysql
+    DB_HOST: db
+    DB_DATABASE: laravel
+    DB_USERNAME: laravel
+    DB_PASSWORD: laravel
+
+x-redis-env: &redis-env
+    SESSION_DRIVER: redis
+    REDIS_HOST: redis
 
 volumes:
-  node_modules:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/laravel/node_modules
-      o: bind
-  db-store:
+    db-store:
+
+services:
+    app:
+        build:
+            dockerfile: infra/php-apache/docker/development/Dockerfile
+            context: .
+        working_dir: /work
+        ports:
+            - 8080:80
+        volumes:
+            - ./laravel/.env:/work/.env
+            - ./laravel/app:/work/app
+            - ./laravel/config:/work/config
+            - ./laravel/database:/work/database
+            - ./laravel/public:/work/public
+            - ./laravel/resources:/work/resources
+            - ./laravel/routes:/work/routes
+            - ./laravel/tests:/work/tests
+            - ./laravel/composer.json:/work/composer.json
+            - ./laravel/composer.lock:/work/composer.lock
+            - ./laravel/vendor:/work/vendor
+        environment:
+            <<: [*common-env, *php-env, *db-env, *redis-env]
+        depends_on:
+            db:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+
+    db:
+        image: mysql/mysql-server:8.0
+        volumes:
+            - ./.docker/mysql/my.cnf:/etc/mysql/my.cnf
+            - ./.docker/mysql/init:/docker-entrypoint-initdb.d
+            - db-store:/var/lib/mysql
+        ports:
+            - 23306:3306
+        environment:
+            <<: [*common-env]
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: laravel
+            MYSQL_USER: laravel
+            MYSQL_PASSWORD: laravel
+        command:
+            - mysqld
+            - --sql-mode=
+        healthcheck:
+            test: ["CMD-SHELL", "mysqladmin ping -u root -ppassword | grep 'mysqld is alive'"]
+            retries: 30
+            timeout: 2s
+            interval: 1s
+
+    redis:
+        image: redis:7.4.0-alpine
+        volumes:
+            - ./.docker/redis/data:/data
+            - ./.docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+        command: redis-server /usr/local/etc/redis/redis.conf
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            retries: 30
+            timeout: 2s
+            interval: 1s
+
+    vite:
+        image: node:20
+        working_dir: /work
+        command: sh -c "npm ci && npm run dev"
+        volumes:
+            - .:/work
+        ports:
+            - 65173:5173
