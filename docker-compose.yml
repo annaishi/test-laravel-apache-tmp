@@ -54,11 +54,11 @@ services:
     db:
         image: mysql/mysql-server:8.0
         volumes:
-            - ./.docker/mysql/my.cnf:/etc/mysql/my.cnf
-            - ./.docker/mysql/init:/docker-entrypoint-initdb.d
+            - ./infra/mysql/my.cnf:/etc/mysql/my.cnf
+            - ./infra/mysql/init:/docker-entrypoint-initdb.d
             - db-store:/var/lib/mysql
         ports:
-            - 23306:3306
+            - 33306:3306
         environment:
             <<: [*common-env]
             MYSQL_ROOT_PASSWORD: password
@@ -77,8 +77,8 @@ services:
     redis:
         image: redis:7.4.0-alpine
         volumes:
-            - ./.docker/redis/data:/data
-            - ./.docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+            - ./infra/redis/data:/data
+            - ./infra/redis/redis.conf:/usr/local/etc/redis/redis.conf
         command: redis-server /usr/local/etc/redis/redis.conf
         healthcheck:
             test: [ "CMD", "redis-cli", "ping" ]
@@ -88,9 +88,9 @@ services:
 
     vite:
         image: node:20
-        working_dir: /work
+        working_dir: /work/laravel
         command: sh -c "npm ci && npm run dev"
         volumes:
-            - .:/work
+            - ./laravel:/work/laravel
         ports:
-            - 65173:5173
+            - 55173:5173
