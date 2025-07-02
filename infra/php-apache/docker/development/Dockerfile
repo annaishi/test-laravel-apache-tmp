@@ -28,7 +28,6 @@ RUN sh -c 'apt-get update && apt-get install -y libicu-dev && docker-php-ext-con
 # -- PHPのXdebug有効化設定
 RUN sh -c 'apt-get update && apt-get install -y autoconf build-essential && \
    pecl install xdebug && docker-php-ext-enable xdebug'
-#todo 必要かどうか確認する
 COPY ../../../../infra/php-apache/php/docker-php-ext-xdebug.ini /tmp/
 RUN sh -c 'rm /tmp/docker-php-ext-xdebug.ini' || sh -c 'cp /tmp/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini'
 
@@ -76,8 +75,6 @@ COPY ../../../../laravel/resources/js ./resources/js
 
 # この設定は南波さんに聞いておいてもらう
 RUN bash -c 'npm run build'
-# todo dummyって何か、必要なのかを確認したい
-RUN bash -c 'mkdir -p public/build && touch public/build/dummy'
 
 #===============================================
 # 実際にサービスで使うところまで構築するフェーズ
@@ -96,7 +93,7 @@ RUN composer dump-autoload
 COPY ../../../../infra/php-apache/php/php.ini-*.patch ${PHP_INI_DIR}/
 RUN cp "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini"; \
     patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-common.patch"
-    # patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-dev.patch" ##これは死ぬ
+    # \ patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-dev.patch" ##これは死ぬ
 
 # apacheのルートにシンボリックリンクを貼る
 RUN mkdir -p /var/www && \
