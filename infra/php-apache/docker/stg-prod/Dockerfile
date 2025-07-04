@@ -83,7 +83,7 @@ COPY ../../../../infra/php-apache/php/php.ini-*.patch ${PHP_INI_DIR}/
 RUN cp "${PHP_INI_DIR}/php.ini-production" "${PHP_INI_DIR}/php.ini"; \
     # デフォルトphp.iniでLaravel最適化
     php artisan view:cache; \
-    patch "${PHP_INI_DIR}/php.ini" php.ini-common.patch; \
+    patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-common.patch"
 
 # apacheのルートにシンボリックリンクを貼る
 RUN mkdir -p /var/www && \
@@ -108,11 +108,8 @@ RUN chmod o+w /work/bootstrap/cache
 
 # Optimize
 # https://readouble.com/laravel/10.x/ja/deployment.html
-RUN if [ "${RELEASE_STAGE}" == "development" ]; then \
-        echo "skip optimization"; \
-    else \
-        # configやrouteはenvが焼き込まれてしまうので使わない
-        # php artisan config:cache; \
-        # php artisan route:cache; \
-        PHP_MEMORY_LIMIT=1G php artisan view:cache; \
-    fi
+RUN PHP_MEMORY_LIMIT=1G php artisan view:cache; \    
+    # configやrouteはenvが焼き込まれてしまうので使わない
+    # php artisan config:cache; \
+    # php artisan route:cache; \
+    
