@@ -16,17 +16,13 @@ x-db-env: &db-env
     DB_USERNAME: laravel
     DB_PASSWORD: laravel
 
-x-redis-env: &redis-env
-    SESSION_DRIVER: redis
-    REDIS_HOST: redis
-
 volumes:
     db-store:
 
 services:
     app:
         build:
-            dockerfile: infra/php-apache/docker/development/Dockerfile
+            dockerfile: infra/php-apache/docker/stg-prod/Dockerfile
             context: .
         working_dir: /work
         ports:
@@ -44,11 +40,9 @@ services:
             - ./laravel/composer.lock:/work/composer.lock
             - ./laravel/vendor:/work/vendor
         environment:
-            <<: [*common-env, *php-env, *db-env, *redis-env]
+            <<: [*common-env, *php-env, *db-env]
         depends_on:
             db:
-                condition: service_healthy
-            redis:
                 condition: service_healthy
 
     db:
@@ -73,24 +67,3 @@ services:
             retries: 30
             timeout: 2s
             interval: 1s
-
-    redis:
-        image: redis:7.4.0-alpine
-        volumes:
-            - ./infra/redis/data:/data
-            - ./infra/redis/redis.conf:/usr/local/etc/redis/redis.conf
-        command: redis-server /usr/local/etc/redis/redis.conf
-        healthcheck:
-            test: [ "CMD", "redis-cli", "ping" ]
-            retries: 30
-            timeout: 2s
-            interval: 1s
-
-    vite:
-        image: node:20
-        working_dir: /work/laravel
-        command: sh -c "npm ci && npm run dev"
-        volumes:
-            - ./laravel:/work/laravel
-        ports:
-            - 5173:5173
