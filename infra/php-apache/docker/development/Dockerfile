@@ -73,7 +73,6 @@ COPY ../../../../laravel/public ./public
 COPY ../../../../laravel/resources/css ./resources/css
 COPY ../../../../laravel/resources/js ./resources/js
 
-# この設定は南波さんに聞いておいてもらう
 RUN bash -c 'npm run build'
 
 #===============================================
