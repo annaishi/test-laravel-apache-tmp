@@ -22,7 +22,7 @@ volumes:
 services:
     app:
         build:
-            dockerfile: infra/php-apache/docker/development/Dockerfile
+            dockerfile: infra/php-apache/docker/stg-prod/Dockerfile
             context: .
         working_dir: /work
         ports:
