@@ -91,7 +91,7 @@ RUN composer dump-autoload
 COPY ../../../../infra/php-apache/php/php.ini-*.patch ${PHP_INI_DIR}/
 RUN cp "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini"; \
     patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-common.patch"
-    # \ patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-dev.patch" ##これは死ぬ
+# RUN patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-dev.patch" ##これは死ぬ
 
 # apacheのルートにシンボリックリンクを貼る
 RUN mkdir -p /var/www && \
