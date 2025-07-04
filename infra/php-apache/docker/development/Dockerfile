@@ -89,7 +89,6 @@ COPY --from=vite /vite/public/build ./public/build
 RUN composer dump-autoload
 
 # -- PHPの設定 (from: https://hub.docker.com/_/php)
-# todo 必要か確認
 COPY ../../../../infra/php-apache/php/php.ini-*.patch ${PHP_INI_DIR}/
 RUN cp "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini"; \
     patch "${PHP_INI_DIR}/php.ini" "${PHP_INI_DIR}/php.ini-common.patch"
